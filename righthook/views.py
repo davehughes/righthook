@@ -3,7 +3,6 @@ from righthook import appsettings, tasks
 
 
 def receive_hook(request):
-    # from righthook import tasks
     tasks.process_hook.delay(request.path, serialize_request(request))
     return http.HttpResponse(200)
 
