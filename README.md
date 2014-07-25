@@ -6,12 +6,11 @@ handlers from the availability of your main Django application.
 
 Installing and configuring
 --------------------------
-TODO: upload to pypi
 ```sh
-pip install git+git://github.com/davehughes/righthook#egg=righthook
+pip install righthook
 ```
 
-The following variables need to be set up for righthook to run correctly:
+The following variables need to be set up for the service to run correctly:
 ```sh
 export DJANGO_SETTINGS_MODULE='righthook.settings'
 export RIGHTHOOK_ORIGINAL_DJANGO_SETTINGS_MODULE='myapp.settings'
@@ -32,3 +31,27 @@ Routing in nginx
   service is running
 + Add a route for '/webhooks' that serves from that upstream
 
+
+Consuming Webhooks
+------------------
+```python
+import re
+from django.dispatch import receiver
+from righthook.signals import webhook_received
+
+@receiver(webhook_received)
+def handle_webhook(path, request_data=None, **kwargs):
+    if path == '/webhooks/serviceA':
+        handle_service_a_webhook(path, request_data)
+    elif path == '/webhooks/serviceB':
+        handle_service_b_webhook(path, request_data)
+    # ...
+
+def handle_service_a_webhook(path, request_data):
+    # ...
+    pass
+
+def handle_service_b_webhook(path, request_data):
+    # ...
+    pass
+```
